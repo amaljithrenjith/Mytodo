@@ -1,25 +1,27 @@
-import React,{useState} from 'react';
+import {useState} from 'react';
+import AddTaskForm from './components/AddTaskForm';
+import UpdateForm from './components/UpdateForm';
+import ToDo from './components/ToDo';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {faCircleCheck, faPen, faTrashCan} from '@fortawesome/free-solid-svg-icons'
+
 import './App.css';
 
 function App() {
 
-  //////// Task----------------------------------
+  //////// Task todo list state
 
  const[toDo,setToDo] = useState([
-  {"id":1,"title":"Task 1","status":false},
-  {"id":2,"title":"Task 2","status":false}
+  //{"id":1,"title":"Task 1","status":false},
+  //{"id":2,"title":"Task 2","status":false}
 
  ])
  
- //////////
+ ////////// tEMP STATE
 
  const [newTask,setNewTask] = useState('');
  const [updateDate,setUpdateData] =useState('');
 
-//////////
+//////////add task
 
  const addTask = () =>{
   if(newTask){
@@ -30,14 +32,14 @@ function App() {
   }
 
  }
- ///////////
+ /////////// delete task
 
  const deleteTask = (id) => {
   let newTasks = toDo.filter( task => task.id !== id)
   setToDo(newTasks);
 }
 
- //////////
+ //////////mark task done completd 
 
  const markDone = (id) => {
   let newTask = toDo.map( task => {
@@ -49,12 +51,16 @@ function App() {
   setToDo(newTask);
 }
 
- ////////// 
+ ////////// cancel update 
+
  const cancelUpdate = () =>{
   setUpdateData('');
 
  }
- //////////
+
+
+ //////////change task
+
  const changeTask = (e) => {
   let newEntry = {
     id: updateDate.id,
@@ -64,7 +70,7 @@ function App() {
   setUpdateData(newEntry);
 }
 
- //////////
+ //////////update task
 
  const updateTask = () =>{
 
@@ -85,44 +91,27 @@ function App() {
       {/*update task */}
       {updateDate && updateDate ? (
         <>
-        <div className='row'>
-        <div className='col'>
-          <input value={updateDate && updateDate.title} 
-           onChange={(e) => changeTask(e)}
-           className='form-control form-control-lg'></input>
-        </div>
-        <div className='col-auto'>
-          <button onClick={updateTask} className='btn btn-ig btn-success mr-20'>update</button>
-          <button onClick={cancelUpdate} className='btn btn-ig btn-warning'>cancel</button>
-        </div>
-      </div>
+        <UpdateForm
 
+        changeTask ={changeTask}
+        updateDate = {updateDate}
+        cancelUpdate = {cancelUpdate} 
+        updateTask={updateTask}
         
+        />
         </>
 
       ) : (
        
         </*add task*/>
 
-         <div className='row'>
-         <div className="col">
-          <input 
-            value={newTask}
-            onChange={ (e) => setNewTask(e.target.value)}
-            className="form-control form-control-lg"
-          />
-        </div>
-        <div className="col-auto">
-          <button
-            onClick={addTask}
-            className="btn btn-lg btn-success"
-          >Add Task</button>
-        </div>
+        <AddTaskForm
 
-      </div>
-      <br />
+        newTask ={newTask}
+        setNewTask ={setNewTask}
+        addTask ={addTask}
 
-        
+        />
         
         </>
 
@@ -131,51 +120,19 @@ function App() {
     
       
 
-      {/*add task*/}
+      
      
 
       {/*display Todo */}
       {toDo && toDo.length ? '' :'No task'}
 
-      {toDo && toDo
-      .sort((a,b) => a.id > b.id ? 1:-1)
-         .map((task,index) =>{
+      <ToDo 
+      toDo ={toDo}
+      markDone ={markDone}
+      setUpdateData ={setUpdateData}
+      deleteTask ={deleteTask}
 
-          return(
-              <React.Fragment key = {task.id}>
-
-                <div className='col taskBg'> 
-                  <div className={task.status ? 'done' :''}>
-                  <span className='taskNumber' >{index + 1}</span>
-                  <span className='taskText' >{task.title}</span>
-
-                  </div>
-
-                  <div className='iconsWrap'>
-                  <span title="Completed / Not Completed"
-                  onClick={ (e) => markDone(task.id) }
-                    >
-                      <FontAwesomeIcon icon={faCircleCheck} />
-                    </span>
-
-                    {task.status ? null :(
-                      <span title='Edit'
-                        onClick={() => setUpdateData({id:task.id, title:task.title,  status:task.status ? true :false})}
-                      >
-                        <FontAwesomeIcon icon={faPen} />
-                      </span>
-
-                    )}
-                    
-                    <span title='Delete' onClick={()=> deleteTask(task.id)}>
-                      <FontAwesomeIcon icon={faTrashCan} />
-                    </span>
-                  </div>
-                </div>
-            </React.Fragment>
-          )
-         })
-      }
+      />
 
     </div>
   );
